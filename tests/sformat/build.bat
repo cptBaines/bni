@@ -12,6 +12,7 @@ SET OLD_PATH=%PATH%
 SET PATH=c:\wsr\tc\sys\llvm11\win64\llvm\bin;c:\wsr\tc\sys\llvm11\win64\llvm\bin\amd64
 SET BUILD_DEFS=
 SET INCLUDE_DIR=-Ic:\wsr\tc\home\bjorn\include\win
+SET LIB=c:\wsr\tc\sys\pellesc10\win64\Lib\Win64
 
 :: compiling without crt only link with native dlls 
 clang-cl /GS- /Gs9999999 /Od /EHa- /MD -Zi -Zl %INCLUDE_DIR% %BUILD_DEFS% ^

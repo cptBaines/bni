@@ -47,7 +47,7 @@ main(s32 argc, s8 **argv)
 	s8 ascii[32] = {0};
 	s8 out[256];
 
-	STBniStringFormater *fmt = bni_formater_create(&bni__mem_arena
+	BniStringFormater *fmt = bni_formater_create(&bni__mem_arena
 			, 3, "Failed %: expected: % != %\n");
 
 	HANDLE stdout = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -60,13 +60,9 @@ main(s32 argc, s8 **argv)
 		; i < array_size(test_data)
 		; ++i)
 	{
-		if (i == 72)
-		{
-			u32 test = 4;
-		}
 		f32 v = float_from_hex(test_data[i].hex);
 		s8 *expected = test_data[i].expected_result;
-		STBniStringFormatArg fa = bni_fa_e(v);
+		BniStringFormatArg fa = bni_fa_e(v);
 		u32 size = bni_format_float((u8*)ascii, 32, &fa);
 		bool is_equal = string_equal(expected, ascii, size);
 		if (!is_equal)

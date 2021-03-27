@@ -1,7 +1,7 @@
 /* bni_base.h - v0.1 basic types and utilities for bni libraries C - Bjorn Nilsson 2021
 
 	This single-header-file, in Sean Berret, style provides:
-  		* my prefered type names. These are the type names used in other header file libs
+		* my prefered type names. These are the type names used in other header file libs
 		* my implementations of some basic utility C-lib functions
 		* implementations of __stdcall mainCRTStartup() or __stdcall WinMainCRTStartup()
 		  to enable building without CRT.
@@ -25,7 +25,7 @@ COMPILE-TIME OPTIONS
 	#define BNI_BASE_NOCRT_IMPLEMENTATION
 
 	Enable copliation without windows CRT. Exposes an implementation of
- 	__stdcall mainCRTStartup() of __stdcall WinMainCRTStartup() depending
+	__stdcall mainCRTStartup() of __stdcall WinMainCRTStartup() depending
 	on the definition of BNI_BASE_CONSOLE_IMPLEMENTATION
 	or BNI_BASE_GUI_IMPLEMENTATION.
 
@@ -63,13 +63,13 @@ COMPILE-TIME OPTIONS
 
 	Mutual exclusive with #define BNI_BASE_GUI_IMPLEMENTATION.
 	Exposes an implementation of
- 	__stdcall mainCRTStartup() and sends assert messages to stderr.
+	__stdcall mainCRTStartup() and sends assert messages to stderr.
 
 	#define BNI_BASE_GUI_IMPLEMENTATION
 
 	Mutual exclusive with #define BNI_BASE_CONSOLE_IMPLEMENTATION.
 	Exposes an implementation of
- 	__stdcall WinMainCRTStartup() and sends assert messages to a message box.
+	__stdcall WinMainCRTStartup() and sends assert messages to a message box.
 
 LICENSE
 
@@ -97,21 +97,21 @@ DOCUMENTATION
 
 	Arena Functions
 		bni_arena_reserve:
-		  void bni_arena_reserve(STBniArena *a, umm n)
+		  void bni_arena_reserve(BniArena *a, umm n)
 			Reserve n bytes of space in arean a
 
-		void * bni_arena_alloc (STBniArena *a , umm n)
+		void * bni_arena_alloc (BniArena *a , umm n)
 			Return a pointer to a chunk of n bytes
 		    from areana a
 
 	Arena macros
 		push_arena_struct:
-		  T* push_arena_struct(STBniArena *a, T)
+		  T* push_arena_struct(BniArena *a, T)
 			Return a pointer to type T, allocated
 			from arena a
 
 		push_arena_array:
-		  T* push_arena_array(STBniArena *a, T, umm c)
+		  T* push_arena_array(BniArena *a, T, umm c)
 				Return a pointer to an array c elements of type T
 				, allocated from arena a
 
@@ -215,7 +215,7 @@ bni_copy_memory(void *dst, void *src, umm size)
 	u8 *s = (u8*)src;
 
 	while (size > 0)
-   	{
+	{
 		*d++ = *s++;
 		--size;
 	}
@@ -274,7 +274,7 @@ void bni_assert_(wchar_t *expr_str, u32 lineno)
 		, MB_ABORTRETRYIGNORE
 		| MB_SETFOREGROUND
 		| MB_TASKMODAL
-	        | MB_ICONERROR	);
+		| MB_ICONERROR);
 	if (ret == IDABORT)
 		ExitProcess(3);
 
@@ -300,12 +300,12 @@ typedef struct BniArena
 	umm  used;
 	umm  hwm;
 	u8   *base;
-} STBniArena;
+} BniArena;
 
 static inline void
 bni_arena_reserve
 (
- 	STBniArena *arena
+	BniArena *arena
 	, umm size
 )
 {
@@ -318,14 +318,14 @@ bni_arena_reserve
 	}
 	else
 	{
- 	 	bni_assert(!"Arena OOM");
+		bni_assert(!"Arena OOM");
 	}
 }
 
 static inline void *
 bni_arena_alloc
 (
- 	  STBniArena *arena
+	  BniArena *arena
 	, umm size
 )
 {
@@ -359,7 +359,7 @@ bni_arena_alloc
 #define BNI_ARENA_SIZE 1024*1024
 #endif
 
-static STBniArena bni__mem_arena;
+static BniArena bni__mem_arena;
 
 s32 main(s32 argc, char **argv);
 

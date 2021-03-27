@@ -23,64 +23,64 @@ DOCUMNETATION
 
 	Functions:
 		bni_formater_create:
-		  STBniStringFormater * bni_formater_create(STBniArena *a , u32 c , s8 *s)
-		    Create a memory area with room for c arguments to be
+		  BniStringFormater * bni_formater_create(BniArena *a , u32 c , s8 *s)
+			Create a memory area with room for c arguments to be
 			injected into format string s from arena a.
 
 		bni_formater_reset:
-		  void bni_formater_reset(STBniStringFormater *)
+		  void bni_formater_reset(BniStringFormater *)
 			Reset formater argument count and enable reuse
 			with new parameters
 
 		bni_push_format_arg:
-		  void bni_push_format_arg (STBniStringFormater *f, STBniStringFormatArg a)
-		  	Push a new argument a onto then next free position in formater f.
+		  void bni_push_format_arg (BniStringFormater *f, BniStringFormatArg a)
+			Push a new argument a onto then next free position in formater f.
 
 		bni_format_str:
-		  u32 bni_format_str (u8 *o , umm s, STBniStringFormatArg *a)
+		  u32 bni_format_str (u8 *o , umm s, BniStringFormatArg *a)
 			output a string to buffer o of size s according to spec in
 			format argument a.
 			Return the number of bytes used in o.
 
 		bni_format_integer:
-		  u32 bni_format_integer(u8 *o , umm s, STBniStringFormatArg *a)
+		  u32 bni_format_integer(u8 *o , umm s, BniStringFormatArg *a)
 			output a signed or unsigned integer to buffer o of size s
 			according to spec in fomat argument a.
 			Return the number of bytes used in o.
 
 		bni_format_float:
-		  u32 bni_format_float(u8 *o , umm s, STBniStringFormatArg *a)
+		  u32 bni_format_float(u8 *o , umm s, BniStringFormatArg *a)
 			output a float to buffer o of size s
 			according to spec in fomat argument a.
 			Return the number of bytes used in o.
 
 		bni_format:
-		  u32 bni_format(u8 *o, umm c, STBniStringFormater *f)
-		    output the content of the formater f to buffer o of size c.
+		  u32 bni_format(u8 *o, umm c, BniStringFormater *f)
+			output the content of the formater f to buffer o of size c.
 			Return the number of bytes used in o.
 
 		bni_format_arg_f:
-		  STBniStringFormatArg bni_format_arg_f(u64 f, f32 v, u16 w, u16 p)
+		  BniStringFormatArg bni_format_arg_f(u64 f, f32 v, u16 w, u16 p)
 			creats a format argument for a float.
 			According to the format flags f, widht w and precision p
 
 		bni_format_arg_s:
-		  STBniStringFormatArg bni_format_arg_s(u64 f, s64 v, u16 w, u16 p)
+		  BniStringFormatArg bni_format_arg_s(u64 f, s64 v, u16 w, u16 p)
 			creats a format argument for a signed integer.
 			According to the format flags f, widht w and precision p
 
 		bni_format_arg_u:
-		  STBniStringFormatArg bni_format_arg_u(u64 f, u64 v, u16 w, u16 p)
+		  BniStringFormatArg bni_format_arg_u(u64 f, u64 v, u16 w, u16 p)
 			creats a format argument for a unsigned integer.
 			According to the format flags f, widht w and precision p
 
 		bni_format_arg_p:
-		  STBniStringFormatArg bni_format_arg_u(u64 f, void *v, u16 w, u16 p)
+		  BniStringFormatArg bni_format_arg_u(u64 f, void *v, u16 w, u16 p)
 			creats a format argument for a pointer
 			According to the format flags f, widht w and precision p
 
 		bni_format_arg_str:
-		  STBniStringFormatArg bni_format_arg_cstr(u64 f, s8 *v, u16 w, u16 p)
+		  BniStringFormatArg bni_format_arg_cstr(u64 f, s8 *v, u16 w, u16 p)
 			creats a format argument for a string
 			According to the format flags f, widht w and precision p
 
@@ -89,7 +89,7 @@ DOCUMNETATION
 		with the usual flag combinations.
 
 		The macros are on the form bni_fa_xxxxt where xxxx are format specifiers
-	   	and t denotes the type of the data passed.
+		and t denotes the type of the data passed.
 
 		x format specifiers are optional and have the following mnemonics:
 
@@ -228,7 +228,7 @@ EXAMPLE
 	flags are not supplied in the format string. Instead they are specified
 	as the values are "pushed" onto the formater which is then passed to
 	bni_format for rendering of the string. To reuse the formater call
-    bni_formater_reset to push the first argument again.
+	bni_formater_reset to push the first argument again.
 
 	Example:
 
@@ -238,7 +238,7 @@ EXAMPLE
 		...
 
 		at = 0;
-		STBniStringFormater fmt = bni_formater_create(arena, 10
+		BniStringFormater fmt = bni_formater_create(arena, 10
 			, "%: {%,%,%}, {%,%,%}, {%,%,%}\n");
 		for (int i = 0; i < 99; i += 3)
 		{
@@ -262,10 +262,10 @@ EXAMPLE
 
 
 	To just format a number into an abitrary buffer without the need of
-    a formater do:
+	a formater do:
 
 	float my_float = 123456789.0f;
-	STBniStringFormatArg fa = bni_dze(my_float, 0, 3);
+	BniStringFormatArg fa = bni_dze(my_float, 0, 3);
 	at += bin_format_float(buf + at, 4096 - at, &fa);
 
 	which would put: +1.235e+08 into buf.
@@ -539,14 +539,14 @@ typedef struct BniStringFormatArg {
 		char *c_str;
 	} v;
 
-} STBniStringFormatArg;
+} BniStringFormatArg;
 
 typedef struct BniStringFormater {
-	STBniStringFormatArg *args;
+	BniStringFormatArg *args;
 	s8 *format_string;
 	u32 arg_max;
 	u32 arg_count;
-} STBniStringFormater;
+} BniStringFormater;
 
 
 
@@ -566,7 +566,7 @@ typedef struct BniInternalFormatBuffer
 	s8 pad_char;
 	s8 pad_count;
 	u16 output_len;
-} STBniInternalFormatBuffer;
+} BniInternaFormatBuffer;
 
 #endif
 
@@ -574,16 +574,16 @@ typedef struct BniInternalFormatBuffer
 static u32
 bni_format_float
 (
- 	u8 *out
+	u8 *out
 	, umm size
-	, STBniStringFormatArg *arg
+	, BniStringFormatArg *arg
 )
 {
 	u32 written = 0;
 	u32 dot_space = 1;
 	bool nan = false;
-	STBniInternalFormatBuffer buf;
-	memset(&buf, 255, sizeof(STBniInternalFormatBuffer));
+	BniInternaFormatBuffer buf;
+	memset(&buf, 255, sizeof(BniInternaFormatBuffer));
 	buf.precision = (u16)((arg->format_info & BNI_FAM_PRECISION)>>16);
 	buf.width = arg->format_info & BNI_FAM_WIDTH;
 	f32 val = arg->v.f;
@@ -1003,9 +1003,9 @@ s8 bni_integer_lut[16] = "0123456789ABCDEF";
 static u32
 bni_format_integer
 (
- 	u8 *out
+	u8 *out
 	, umm size
-	, STBniStringFormatArg *arg
+	, BniStringFormatArg *arg
 )
 {
 	u8 buf[BNI_FORMAT_BUF_SIZE];
@@ -1123,9 +1123,9 @@ bni_format_integer
 static u32
 bni_format_str
 (
-  	u8 *out
-  , umm count
-  , STBniStringFormatArg *arg
+	  u8 *out
+	, umm count
+	, BniStringFormatArg *arg
 )
 {
 	u16 width = arg->format_info & BNI_FAM_WIDTH;
@@ -1162,7 +1162,7 @@ bni_format_str
 	{
 		s8 *end = arg->v.c_str + output_len;
 		for(s8 *p = arg->v.c_str
-		    ; p < end
+			; p < end
 			; ++p)
 		{
 			s8 v = *p;
@@ -1174,7 +1174,7 @@ bni_format_str
 	{
 		s8 *end = arg->v.c_str + output_len;
 		for(s8 *p = arg->v.c_str
-		    ; p < end
+			; p < end
 			; ++p)
 		{
 			out[at++] = *p;
@@ -1194,13 +1194,13 @@ bni_format
 (
   	u8 *dest
   , umm count
-  , STBniStringFormater *formater
+  , BniStringFormater *formater
 )
 {
 	umm dest_at = 0;
 	umm bytes_consumed = 0;
 	s8 *template = formater->format_string;
-	STBniStringFormatArg *arg;
+	BniStringFormatArg *arg;
 	u32 argc = 0;
 	s8 buf[BNI_FORMAT_BUF_SIZE];
 
@@ -1272,21 +1272,21 @@ bni_format
 }
 
 static inline void
-bni_formater_reset(STBniStringFormater *formater)
+bni_formater_reset(BniStringFormater *formater)
 {
 	formater->arg_count = 0;
 }
 
-static inline STBniStringFormater *
+static inline BniStringFormater *
 bni_formater_create
 (
- 	STBniArena *arena
+	BniArena *arena
 	, u32 max
 	, s8 *format_string
 )
 {
-	STBniStringFormater *result = push_arena_struct(arena, STBniStringFormater);
-	result->args = push_arena_array(arena, STBniStringFormatArg, max);
+	BniStringFormater *result = push_arena_struct(arena, BniStringFormater);
+	result->args = push_arena_array(arena, BniStringFormatArg, max);
 	result->format_string = format_string;
 	result->arg_max = max;
 	result->arg_count = 0;
@@ -1297,70 +1297,70 @@ bni_formater_create
 static inline void
 bni_push_format_arg
 (
-	  STBniStringFormater *format
-	, STBniStringFormatArg arg
+	  BniStringFormater *format
+	, BniStringFormatArg arg
 )
 {
 	bni_assert(format->arg_count < format->arg_max);
 	format->args[format->arg_count++] = arg;
 }
 
-static inline STBniStringFormatArg
+static inline BniStringFormatArg
 bni_format_arg_f
 (
- 	 u64 format_info
+	  u64 format_info
 	, f32 val
 	, u16 width
 	, u16 precision
 )
 {
-	STBniStringFormatArg result;
+	BniStringFormatArg result;
 	result.format_info = (BNI_FAT_F32 | format_info) | (precision) << 16 | (width);
 	result.v.f = val;
 	return result;
 }
 
-static inline STBniStringFormatArg
+static inline BniStringFormatArg
 bni_format_arg_s
 (
- 	 u64 format_info
+	  u64 format_info
 	, s64 val
 	, u16 width
 	, u16 precision
 )
 {
-	STBniStringFormatArg result;
+	BniStringFormatArg result;
 	result.format_info = (BNI_FAT_S64 | format_info) | (precision) << 16 | (width);
 	result.v.s = val;
 	return result;
 }
 
 
-static inline STBniStringFormatArg
+static inline BniStringFormatArg
 bni_format_arg_u
 (
- 	 u64 format_info
+	  u64 format_info
 	, u64 val
 	, u16 width
 	, u16 precision
 )
 {
-	STBniStringFormatArg result;
+	BniStringFormatArg result;
 	result.format_info = (BNI_FAT_U64 | format_info) | (precision) << 16 | (width);
 	result.v.u = val;
 	return result;
 }
 
-static inline STBniStringFormatArg
+static inline BniStringFormatArg
 bni_format_arg_cstr
 (
- 	 u64 format_info
+	  u64 format_info
 	, s8 *val
 	, u16 width
 	, u16 precision
 )
 {
-	STBniStringFormatArg result;
+	BniStringFormatArg result;
 	result.format_info = (BNI_FAT_CSTR | format_info) | (precision) << 16 | (width);
 	result.v.c_str = val;
 	return result;
