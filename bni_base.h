@@ -140,8 +140,8 @@ DOCUMENTATION
 
 */
 
-#ifndef INCLUDED_BNI_PLATFORM
-#define INCLUDED_BNI_PLATFORM
+#ifndef INCLUDED_BNI_BASE_H
+#define INCLUDED_BNI_BASE_H
 
 #if !defined(BNI_PLATFORM_WINDOWS_IMPLEMENTATION) && !defined(BNI_PLATFORM_UNIX_IMPLEMENTATION)
 #error BNI_PLATFORM_WINDOWS_IMPLEMENTATION or BNI_PLATFORM_UNIX_IMPLEMENTATION must be defined
@@ -175,7 +175,9 @@ typedef s64      b64;
 typedef unsigned short wchar_t;
 
 #define array_len(a) (sizeof((a))/sizeof((a)[0]))
-#define offsetof(struct_name, member_name) (((struct_name*)0)->(member_name));
+
+#define offsetof(struct_name, member_name) \
+	((umm)&(((struct_name*)0)->member_name))
 
 
 /*
@@ -699,7 +701,7 @@ bni_win32_arena_memory_free(void *arena_block)
      (BniArena*)bni_arena_create(sizeof(BniArena), 0, (min_block_size))
 
 #define bni_arena_bootstrap_struct(type, arena_member, min_block_size) \
-     (type*)bni_arena_create(sizeof((type)), offsetoff((type), (arena_member)), (min_block_size))
+     (type*)bni_arena_create(sizeof(type), offsetof(type, arena_member), (min_block_size))
 
 #define bni_arena_push_array(arena, type, count) \
 	(type*)bni_arena_reserve((arena), sizeof(type) * (count))
@@ -707,7 +709,7 @@ bni_win32_arena_memory_free(void *arena_block)
 #define bni_arena_push_ptr(arena, type) \
 	(type*)bni_arena_reserve((arena), sizeof(type*))
 
-#define bni_arena_push_struct(type) \
+#define bni_arena_push_struct(arena, type) \
 	(type*)bni_arena_reserve((arena), sizeof(type))
 
 static inline umm
