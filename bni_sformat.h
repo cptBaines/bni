@@ -425,6 +425,7 @@ EXAMPLE
 #define bni_fa_t(val)          bni_format_arg_cstr(BNI_FAC_____,(val),0, 0)
 #define bni_fa_lt(val)         bni_format_arg_cstr(BNI_FAC____L,(val),(width), 0)
 #define bni_fa_rt(val)         bni_format_arg_cstr(BNI_FAC_____,(val),(width), 0)
+#define bni_fa_t_(val,width,precision)   bni_format_arg_cstr(BNI_FAC_____,(val),(width),(precision))
 
 /* Float formaters */
 #define bni_fa_f(val)          bni_format_arg_f(BNI_FAC_____,(val),0,6)
@@ -570,7 +571,7 @@ typedef struct BniInternalFormatBuffer
 
 #endif
 
-#ifdef BNI_SFORMAT_IMPLEMENTETAION
+#ifdef BNI_SFORMAT_IMPLEMENTATION
 static u32
 bni_format_float
 (
@@ -1129,11 +1130,14 @@ bni_format_str
 )
 {
 	u16 width = arg->format_info & BNI_FAM_WIDTH;
-	u32 output_len = 0;
+	u32 output_len = (u16)((arg->format_info & BNI_FAM_PRECISION)>>16);
 	s8 *p = arg->v.c_str;
-	while(*p != 0)
-		++p;
-	output_len = p - arg->v.c_str;
+	if (output_len == 0)
+	{
+		while(*p != 0)
+			++p;
+		output_len = p - arg->v.c_str;
+	}
 
 	if (BNI_FA_HAS_HEX(arg))
 	{
@@ -1285,8 +1289,8 @@ bni_formater_create
 	, s8 *format_string
 )
 {
-	BniStringFormater *result = push_arena_struct(arena, BniStringFormater);
-	result->args = push_arena_array(arena, BniStringFormatArg, max);
+	BniStringFormater *result = bni_arena_push_struct(arena, BniStringFormater);
+	result->args = bni_arena_push_array(arena, BniStringFormatArg, max);
 	result->format_string = format_string;
 	result->arg_max = max;
 	result->arg_count = 0;
