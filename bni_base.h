@@ -261,6 +261,21 @@ memset(void *dst, s32 value, u64 size)
 	return dst;
 }
 
+void *
+memcpy(void *dst, const void *src, umm size)
+{
+	u8 *d = (u8*)dst;
+	u8 *s = (u8*)src;
+
+	while (size > 0)
+	{
+		*d++ = *s++;
+		--size;
+	}
+	return dst;
+}
+
+
 static inline void *
 bni_memset(void *dst, s32 value, u64 size)
 {
@@ -836,6 +851,9 @@ end_temp_memory(TempMemory *tmp)
 #define bni_file_open(file_name, file_mode, arena) \
 		bni_win32_file_open((file_name), (file_mode), (arena))
 
+#define bni_file_close(bnifile) \
+		bni_win32_close_handle(bnifile.file);
+
 static inline BniFile
 bni_win32_get_stdout()
 {
@@ -910,8 +928,15 @@ bni_win32_api_str(s8 *str, umm len, TempMemory *tmp)
 	umm api_str_len = 2 * len;
 	u8 *api_str = bni_arena_push_array(tmp->arena, u8, api_str_len + 8);
 	u32 used = bni_utf8_to_utf16le((u8*)api_str, api_str_len + 2, str, len);
-	*((u16*)api_str + used) = 0;
+	*((u16*)(api_str + used)) = 0;
 	return (s16*)api_str;
+}
+
+static void
+bni_win32_close_handle(HANDLE handle)
+{
+	BOOL result = CloseHandle(handle);
+	bni_assert(result);
 }
 
 static BniFile
