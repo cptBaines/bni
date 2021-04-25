@@ -1281,6 +1281,31 @@ bni_formater_reset(BniStringFormater *formater)
 	formater->arg_count = 0;
 }
 
+static inline umm
+bni_formater_size(BniStringFormater *formater)
+{
+	return sizeof(BniStringFormater)
+		+ formater->arg_max * sizeof(BniStringFormatArg);
+}
+
+static inline BniStringFormater *
+bni_formater_create_buf
+(
+	  u8 *buf
+	, umm size
+	, u32 max
+	, s8 *format_string
+)
+{
+	bni_assert(size > sizeof(BniStringFormater)
+			   + max * sizeof(BniStringFormatArg));
+	BniStringFormater * result = (BniStringFormater*)buf;
+	result->args = (BniStringFormatArg*)(buf + sizeof(BniStringFormater));
+	result->arg_max = max;
+	result->arg_count = 0;
+	return result;
+}
+
 static inline BniStringFormater *
 bni_formater_create
 (
