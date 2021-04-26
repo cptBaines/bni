@@ -796,9 +796,9 @@ bni_arena_reserve(BniArena *arena, umm size)
 		hdr->size = arena->size;
 		hdr->used = arena->used;
 
-		hdr->base = ((u8*)hdr) + aligned_header_size;
-		hdr->size = alloc_size - aligned_header_size;
-		hdr->used = aligned_size;
+		arena->base = ((u8*)hdr) + aligned_header_size;
+		arena->size = alloc_size - aligned_header_size;
+		arena->used = aligned_size;
 		mem = arena->base;
 	}
 	return mem;
@@ -842,6 +842,9 @@ end_temp_memory(TempMemory *tmp)
 #define bni_file_read(file, data, size) \
 	bni_win32_file_read((file), (data), (size))
 
+#define bni_file_read_at(file, offset, data, size) \
+	bni_win32_file_read_at((file),(offset), (data), (size))
+
 #define bni_file_write(file, data, size) \
 	bni_win32_file_write((file), (data), (size))
 
@@ -878,6 +881,20 @@ bni_win32_file_read(BniFile file, u8 *buf, u32 size)
 {
 	DWORD bytes_read;
 	if (!ReadFile(file.file, buf, size, &bytes_read, 0))
+	{
+		file.platform_error = GetLastError();
+	}
+	return (u32)bytes_read;
+}
+
+static inline u32
+bni_win32_file_read_at(BniFile file, umm offset, u8 *buf, u32 size)
+{
+	DWORD bytes_read;
+	OVERLAPPED overlapped = {0};
+	overlapped.DUMMYUNIONNAME.DUMMYSTRUCTNAME.Offset = (u32)(offset & 0x00000000FFFFFFF);
+	overlapped.DUMMYUNIONNAME.DUMMYSTRUCTNAME.OffsetHigh = (u32)(offset >> 32);
+	if (!ReadFile(file.file, buf, size, &bytes_read, &overlapped))
 	{
 		file.platform_error = GetLastError();
 	}
