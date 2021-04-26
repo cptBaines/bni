@@ -423,8 +423,8 @@ EXAMPLE
 
 /* Text formaters */
 #define bni_fa_t(val)          bni_format_arg_cstr(BNI_FAC_____,(val),0, 0)
-#define bni_fa_lt(val)         bni_format_arg_cstr(BNI_FAC____L,(val),(width), 0)
-#define bni_fa_rt(val)         bni_format_arg_cstr(BNI_FAC_____,(val),(width), 0)
+#define bni_fa_lt(val,width)   bni_format_arg_cstr(BNI_FAC____L,(val),(width), 0)
+#define bni_fa_rt(val,width)   bni_format_arg_cstr(BNI_FAC_____,(val),(width), 0)
 #define bni_fa_t_(val,width,precision)   bni_format_arg_cstr(BNI_FAC_____,(val),(width),(precision))
 
 /* Float formaters */
@@ -1069,12 +1069,10 @@ bni_format_integer
 	u32 at = 0;
 	if (width > output_len)
 	{
-	 	if (BNI_FA_HAS_JUSITIFY_LEFT(arg))
-			pad_char = ' ';
-		else if (BNI_FA_HAS_PAD_ZERO(arg))
+		if (BNI_FA_HAS_PAD_ZERO(arg))
 			pad_char = '0';
 		else
-			bni_assert(!"Unreachable");
+			pad_char = ' ';
 
 		pad_count = width - output_len;
 	}
@@ -1303,6 +1301,7 @@ bni_formater_create_buf
 	result->args = (BniStringFormatArg*)(buf + sizeof(BniStringFormater));
 	result->arg_max = max;
 	result->arg_count = 0;
+	result->format_string = format_string;
 	return result;
 }
 
