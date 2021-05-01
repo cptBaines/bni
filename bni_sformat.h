@@ -1347,6 +1347,30 @@ bni_push_format_arg
 	format->args[format->arg_count++] = arg;
 }
 
+#if defined(BNI_HAVE_VA_ARGS)
+static umm
+bni_sformat
+(
+	u8 *dest
+  , umm size
+  , BniStringFormater *fmt
+  , ...
+)
+{
+	umm at = 0;
+	va_list argp;
+	va_start(argp, fmt);
+	while(fmt->arg_count < fmt->arg_max)
+	{
+		bni_push_format_arg(fmt, va_arg(argp, BniStringFormatArg));
+	}
+	at += bni_format(dest, size, fmt);
+	bni_formater_reset(fmt);
+	va_end(argp);
+	return at;
+}
+#endif
+
 static inline BniStringFormatArg
 bni_format_arg_f
 (
