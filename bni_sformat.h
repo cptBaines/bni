@@ -509,6 +509,14 @@ EXAMPLE
 #define BNI_FA_HAS_JUSITIFY_LEFT(fa) \
 	((((fa)->format_info) & BNI_FA_JUSTIFY_LEFT) == BNI_FA_JUSTIFY_LEFT)
 
+
+
+#define BNI_ALLOC_STACK_FORMATER(name, nargs, fmt_str) \
+	BniStringFormater name[(1 + (nargs))]; \
+	name[0].format_string = fmt_str; \
+	name[0].arg_max = (nargs); \
+	name[0].arg_count = 0
+
 #if 0
 #ifndef BNI_BASE_H_INCLUDED
 // NOTE(bjorn): define a memcopy even if BNI_BASE_H
@@ -529,6 +537,7 @@ bni_copy_memory(void *dst, void *src, umm size)
 #endif
 #endif
 
+// 16 bytes
 typedef struct BniStringFormatArg {
 	u64 format_info;
 	union {
@@ -542,13 +551,14 @@ typedef struct BniStringFormatArg {
 
 } BniStringFormatArg;
 
+// 16 bytes + array of 16 bytes
 typedef struct BniStringFormater {
-	BniStringFormatArg *args;
+//	BniStringFormatArg *args;
 	s8 *format_string;
 	u32 arg_max;
 	u32 arg_count;
+	BniStringFormatArg args[0];
 } BniStringFormater;
-
 
 
 typedef struct BniInternalFormatBuffer
@@ -1286,6 +1296,7 @@ bni_formater_size(BniStringFormater *formater)
 		+ formater->arg_max * sizeof(BniStringFormatArg);
 }
 
+#if 0
 static inline BniStringFormater *
 bni_formater_create_buf
 (
@@ -1304,6 +1315,7 @@ bni_formater_create_buf
 	result->format_string = format_string;
 	return result;
 }
+#endif
 
 static inline BniStringFormater *
 bni_formater_create
@@ -1313,8 +1325,10 @@ bni_formater_create
 	, s8 *format_string
 )
 {
-	BniStringFormater *result = bni_arena_push_struct(arena, BniStringFormater);
-	result->args = bni_arena_push_array(arena, BniStringFormatArg, max);
+	BniStringFormater *result = bni_arena_push_array(arena, BniStringFormater
+			, sizeof(BniStringFormater) * (max + 1));
+	//BniStringFormater *result = bni_arena_push_struct(arena, BniStringFormater);
+	//result->args = bni_arena_push_array(arena, BniStringFormatArg, max);
 	result->format_string = format_string;
 	result->arg_max = max;
 	result->arg_count = 0;
