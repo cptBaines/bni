@@ -857,6 +857,8 @@ end_temp_memory(TempMemory *tmp)
 
 #define bni_file_get_stdout() bni_win32_get_stdout()
 
+#define bni_file_get_stderr() bni_win32_get_stderr()
+
 #define bni_file_get_size(file) bni_win32_file_get_size((file))
 #define bni_file_open(file_name, file_mode, arena) \
 		bni_win32_file_open((file_name), (file_mode), (arena))
@@ -869,6 +871,14 @@ bni_win32_get_stdout()
 {
 	BniFile result = {0};
 	result.file = GetStdHandle(STD_OUTPUT_HANDLE);
+	return result;
+}
+
+static inline BniFile
+bni_win32_get_stderr()
+{
+	BniFile result = {0};
+	result.file = GetStdHandle(STD_ERROR_HANDLE);
 	return result;
 }
 
