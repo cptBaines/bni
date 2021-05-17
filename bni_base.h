@@ -1030,6 +1030,13 @@ s32 main(s32 argc, char **argv);
 
 int _fltused;
 
+static inline bool
+bni__batch_terminator(s8 c)
+{
+	return (c == '&' || c == '>' || c == '<'
+			|| c == '|');
+}
+
 #if defined(BNI_CONSOLE)
 void __stdcall mainCRTStartup()
 #else
@@ -1059,7 +1066,11 @@ void __stdcall WinMainCRTStartup()
 	bool in_string = false;
 	while (*src != '\0')
 	{
-		if (*src == '"')
+		if (*src == '\0' || bni__batch_terminator(*src))
+		{
+			break;
+		}
+		else if (*src == '"')
 		{
 			++src;
 			in_string = !in_string;
@@ -1072,6 +1083,7 @@ void __stdcall WinMainCRTStartup()
 		{
 			++argc;
 			*dst++ = '\0';
+
 			while (*src == ' ')
 				++src;
 
@@ -1080,12 +1092,16 @@ void __stdcall WinMainCRTStartup()
 			beg_arg = dst;
 		}
 	}
-	++argc;	       // account for last arg
-	*dst++ = '\0'; // zero terminate last string
+
+	if (dst > beg_arg) {
+		++argc;	       // account for last arg
+		*dst++ = '\0'; // zero terminate last string
+
+		argv_ind = (s8**)bni_arena_push_ptr(arena, s8);
+		*argv_ind = beg_arg;
+	}
 
 
-	argv_ind = (s8**)bni_arena_push_ptr(arena, s8);
-	*argv_ind = beg_arg;
 
 	argv_ind = (s8**)bni_arena_push_ptr(arena, s8);
 	*argv_ind = 0;
